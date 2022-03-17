@@ -4,7 +4,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 // main configuration object
 // We'll write options within this object that tell webpack what to do
-module.exports = { 
+const config = { 
     // basic configuration - provide webpack with 3 properties(entry, output, mode)
     // the entry point is the root of the bundle and the beginning of the dependency graph, so provide relative path
     entry: { 
@@ -29,7 +29,7 @@ module.exports = {
         rules: [
             // process any image file with the file extension of .jpg
             {
-                test: /\.jpg$/i,
+                test: /\.(png|jpe?g|gif)$/i,
                 // add another property called use where the actual loader is implemented
                 use: [
                     {
@@ -68,9 +68,17 @@ module.exports = {
         // Notice that when we added the BundleAnalyzerPlugin, we configured the analyzerMode property with a static value. This will output an HTML file called report.html that will generate in the dist folder
     ],
     // provide the mode - by default, webpack wants to run in prodution mode
-    mode: 'development'
+    mode: 'development',
+
+    // contentBase is used as the key in the devServer object and that is now depreciated so static is the replacement
+    // The ./ is a reference to the public folder since thats the default for webpack-dev-server
+    devServer: {
+        static: './'
+    }
 };
 // several ways to code split
 // entry point splitting - separates code by entry pointes in your app. An entry point is defined by each page's requisite script files to load
 // vendor splitting - separates vendor code (e.g., jQuery, Bootstrap) away from your app's code. A vendor bundle can also be shared between other bundles, further reducing overall bundle size by creating a common chunk
 // dynamic splitting - separates code and allows dynamic importing of modules. This type of splitting is often best for single-page applications that use front end routing
+
+module.exports = config;
