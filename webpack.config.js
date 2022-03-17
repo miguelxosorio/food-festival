@@ -1,6 +1,7 @@
 const path = require('path'); // path dep
-const webpack = require('webpack');
+const webpack = require('webpack'); // webpack dep
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; // webpack has access to this plugin
+const WebpackPwaManifest = require('webpack-pwa-manifest'); // webpack pwa manifest dep
 
 // main configuration object
 // We'll write options within this object that tell webpack what to do
@@ -61,12 +62,32 @@ const config = {
             $: 'jquery',                    // tell webpack to make exceptions for these variables by using webpack.ProvidePlugin
             jQuery: 'jquery'
         }),
-        // add to plugins property the bundle analyzer
+        
+        // add to plugins property - the bundle analyzer
         new BundleAnalyzerPlugin({
             analyzerMode: 'static', // the report outputs to an HTML file in the dist folder
-        })
+        }),
         // Notice that when we added the BundleAnalyzerPlugin, we configured the analyzerMode property with a static value. This will output an HTML file called report.html that will generate in the dist folder
+        
+        // we use the new keyword, we are invoking a constructor function
+        // creates the manifest.json
+        new WebpackPwaManifest({
+            name: "Food Event",
+            short_name: "Foodies",
+            description: "An app that allows you to view upcoming food events.",
+            start_url: "../index.html",                                             // to specify the homepage for the PWA relative to the location of the manifest file
+            background_color: "#01579b",
+            theme_color: "#ffffff",
+            fingerprints: false,                                                    // specific to the manifest plugin, fingerprintes tell webpack whether or not it should generate unique fingerprints, if true, it will generate unique fingerprints each time a new manifest is generated
+            inject: false,                                                          // inject property determines whether the link to the manifest.json is added to the HTML
+            icons: [{
+                src: path.resolve("assets/img/icons/icon-512x512.png"),             // path to the icon image we want to use
+                sizes: [96, 128, 192, 256, 384, 512],                               // plugin will take the src image, and create icons with the dimensions of the numbers provided as the value of the sizes property
+                destination: path.join("assets", "icons")                           // designates where the icons will be sent after the creation of the web manifest is completed by the plugin
+            }]
+        })
     ],
+    
     // provide the mode - by default, webpack wants to run in prodution mode
     mode: 'development',
 
